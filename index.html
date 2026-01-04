@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAP QUOTES</title>
+<style>
+body { margin:0; font-family:Arial; background:#0e0e0e; color:#f2f2f2; }
+header { padding:18px; text-align:center; font-size:26px; font-weight:bold; }
+nav { display:flex; justify-content:center; gap:10px; padding:10px; flex-wrap:wrap; }
+nav button { background:#1c1c1c; color:white; border:none; padding:10px 14px; border-radius:8px; }
+section { display:none; padding:20px; }
+section.active { display:block; }
+.card { background:#161616; padding:20px; border-radius:12px; margin-bottom:15px; }
+.quote { font-size:22px; font-weight:bold; text-align:center; }
+img.avatar { width:140px; height:140px; border-radius:50%; display:block; margin:10px auto; object-fit:cover; }
+footer { text-align:center; opacity:0.6; padding:15px; }
+</style>
+</head>
+<body>
+
+<header>DAP QUOTES</header>
+
+<nav>
+<button onclick="show('home')">Home</button>
+<button onclick="show('categories')">Categories</button>
+<button onclick="show('saved')">Saved</button>
+<button onclick="show('profile')">Profile</button>
+</nav>
+
+<section id="home" class="active">
+<div class="card">
+<div class="quote" id="daily"></div>
+<p id="cat" style="text-align:center;"></p>
+<button onclick="save()">Save Quote</button>
+</div>
+</section>
+
+<section id="categories">
+<div class="card" id="catList"></div>
+</section>
+
+<section id="saved">
+<div class="card" id="savedList">No saved quotes yet.</div>
+</section>
+
+<section id="profile">
+<div class="card" style="text-align:center;">
+<img class="avatar" src="profile.jpg">
+<h2>DAP QUOTES</h2>
+<p><b>Discipline. Ambition. Power.</b></p>
+<p><i>Built for men who refuse to be average.</i></p>
+</div>
+</section>
+
+<footer>© DAP QUOTES</footer>
+
+<script>
+const quotes = [
+["Discipline will take you where motivation won’t.","Discipline"],
+["Excuses don’t build empires.","Motivation"],
+["Comfort is the enemy of greatness.","Motivation"],
+["Silence, focus, results.","Masculinity"],
+["A man who controls himself controls everything.","Masculinity"],
+["Work while they sleep.","Hustle"],
+["Focus is a weapon.","Focus"],
+["Results beat explanations.","Success"],
+["Earn respect, don’t ask for it.","Success"]
+];
+
+while (quotes.length < 120) {
+  quotes.push(...quotes.slice(0, 20));
+}
+
+let index = Math.floor(Date.now() / 86400000) % quotes.length;
+
+function show(id) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'categories') renderCats();
+  if (id === 'saved') renderSaved();
+}
+
+function render() {
+  document.getElementById('daily').innerText = quotes[index][0];
+  document.getElementById('cat').innerText = quotes[index][1];
+}
+
+function save() {
+  let s = JSON.parse(localStorage.getItem('saved') || '[]');
+  s.push(quotes[index][0]);
+  localStorage.setItem('saved', JSON.stringify(s));
+  alert("Saved");
+}
+
+function renderSaved() {
+  let s = JSON.parse(localStorage.getItem('saved') || '[]');
+  document.getElementById('savedList').innerHTML = s.length
+    ? s.map(q => "<p>• " + q + "</p>").join("")
+    : "No saved quotes yet.";
+}
+
+function renderCats() {
+  let out = "";
+  quotes.forEach(q => out += "<p>[" + q[1] + "] " + q[0] + "</p>");
+  document.getElementById('catList').innerHTML = out;
+}
+
+render();
+</script>
+
+</body>
+</html>
